@@ -1,5 +1,24 @@
 let playerScore = 0;
 let computerScore = 0;
+let currentRound = 1;
+
+const rockButton = document.getElementById('rock');
+const paperButton = document.getElementById('paper');
+const scissorsButton = document.getElementById('scissors');
+
+const matchResultDiv = document.getElementById('matchResult');
+const playerScoreDiv = document.getElementById('playerScore');
+const computerScoreDiv = document.getElementById('computerScore');
+
+const roundDiv = document.getElementById('round');
+
+const gameOverScreenDiv = document.getElementById('gameOverScreen');
+const gameOverDiv = document.querySelector('div.gameOver');
+
+const playerPick = document.getElementById('yourPick');
+const computerPick = document.getElementById('computerPick');
+
+roundDiv.textContent = `Round ${currentRound}`;
 
 function computerPlay() {
     const val = Math.floor(Math.random()*3);
@@ -17,65 +36,124 @@ function playRound(playerSelection, computerSelection) {
         if (computerSelection === "rock") {
             return "It's a tie! Rock equals Rock"
         } else if (computerSelection === "paper") {
-            return "You lose! Paper beats Rock"
+            return "Bot gains a point! Paper beats Rock"
         } else if (computerSelection === "scissors") {
-            return "You win! Rock beats Scissors"
+            return "You gain a point! Rock beats Scissors"
         }
 
     } else if (playerSelection === "paper") {
 
         if (computerSelection === "rock") {
-            return "You win! Paper beats Rock"
+            return "You gain a point! Paper beats Rock"
         } else if (computerSelection === "paper") {
             return "It's a tie! Paper equals Paper"
         } else if (computerSelection === "scissors") {
-            return "You lose! Scissors beats Paper"
+            return "Bot gains a point! Scissors beats Paper"
         }
 
     } else if (playerSelection === "scissors") {
 
         if (computerSelection === "rock") {
-            return "You lose! Rock beats Scissors"
+            return "Bot gains a point! Rock beats Scissors"
         } else if (computerSelection === "paper") {
-            return "You win! Scissors beats Paper"
+            return "You gain a point! Scissors beats Paper"
         } else if (computerSelection === "scissors") {
             return "It's a tie! Scissors equals Scissors"
         }
     }
 }
 
-function game() {
+function calculateResult(result) {
 
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt(`Round ${i+1} \nPick your weapon! Paper/Rock/Scissors`).toLowerCase();
-        const computerSelection = computerPlay();
-        
-        
-        const result = playRound(playerSelection, computerSelection);
-
-        if (result.slice(0,8) === "You win!") {
-            playerScore++;
-        } else if (result.slice(0,9) === "You lose!") {
-            computerScore++;
-        }
-        
-        console.log(result);
-
+    if (result.slice(0,3) === "You") {
+        playerScore++;
+    } else if (result.slice(0,3) === "Bot") {
+        computerScore++;
     }
-
     
 }
 
-game();
-console.log("")
-console.log("Results of the game:")
-console.log("Your score: " + playerScore);
-console.log("Computer score: " + computerScore);
+function game(playerSelection) {
+    
+    const compPlay = computerPlay();
 
-if (playerScore > computerScore) {
-    console.log("Congratulations, You win the game!")
-} else if (playerScore < computerScore) {
-    console.log("Unfortunately you lost the game. Try again next time!")
-} else {
-    console.log("It's a draw!")
+    if (playerSelection === 'rock') {
+        playerPick.textContent = "Rock";
+    } else if (playerSelection === 'paper') {
+        playerPick.textContent = "Paper";
+    } else if (playerSelection === 'scissors') {
+        playerPick.textContent = "Scissors";
+    }
+
+    if (compPlay === 'rock') {
+        computerPick.textContent = "Rock";
+    } else if (compPlay === 'paper') {
+        computerPick.textContent = "Paper";
+    } else if (compPlay === 'scissors') {
+        computerPick.textContent = "Scissors";
+    }
+
+    
+    const result = playRound(playerSelection, compPlay);
+    matchResultDiv.textContent = result;
+    calculateResult(result);
+    
+    currentRound++;
+    roundDiv.textContent = `Round ${currentRound}`;
+    playerScoreDiv.textContent = playerScore;
+    computerScoreDiv.textContent = computerScore;
+
+    if (playerScore === 5) {
+        gameOverScreenDiv.textContent = "Congratulations, You win the game!";
+        rockButton.removeEventListener('click', rockGameFunct);
+        paperButton.removeEventListener('click', paperGameFunct);
+        scissorsButton.removeEventListener('click', scissorsGameFunct);
+
+        const tryAgainButton = document.createElement('button');
+        tryAgainButton.setAttribute('id', 'tryAgain');
+        tryAgainButton.textContent = "Try Again?";
+        tryAgainButton.addEventListener('click', () => {
+            location.href = "./index.html";
+        })
+
+        gameOverDiv.appendChild(tryAgainButton);
+        
+
+    } else if (computerScore === 5) {
+        gameOverScreenDiv.textContent = "Unfortunately you lost the game. Try again next time!";
+        rockButton.removeEventListener('click', rockGameFunct);
+        paperButton.removeEventListener('click', paperGameFunct);
+        scissorsButton.removeEventListener('click', scissorsGameFunct);
+
+        const tryAgainButton = document.createElement('button');
+        tryAgainButton.setAttribute('id', 'tryAgain');
+        tryAgainButton.textContent = "Try Again?";
+        tryAgainButton.addEventListener('click', () => {
+            location.href = "./index.html";
+        })
+
+        gameOverDiv.appendChild(tryAgainButton);
+    }
 }
+
+
+
+const rockGameFunct = () => {
+    game('rock');
+};
+
+const paperGameFunct = () => {
+    game('paper');
+};
+
+const scissorsGameFunct = () => {
+    game('scissors');
+};
+
+
+
+rockButton.addEventListener('click', rockGameFunct)
+
+paperButton.addEventListener('click', paperGameFunct)
+
+scissorsButton.addEventListener('click', scissorsGameFunct)

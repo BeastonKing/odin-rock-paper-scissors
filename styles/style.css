@@ -1,0 +1,11 @@
+div.header {
+    font-size: 30px;
+}
+
+div.content {
+    background-color: aquamarine;
+}
+
+div.gameOver {
+    background-color: lime;
+}
